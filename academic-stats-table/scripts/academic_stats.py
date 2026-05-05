@@ -52,7 +52,7 @@ def generate_html_table(results, title, group1_name, group2_name):
 
     html_parts.append(
         '<table style="width:100%; border-collapse:collapse;'
-        'font-family:sans-serif; font-size:13px;">'
+        'font-family:Times New Roman, serif; font-size:13px;">'
     )
     html_parts.append(
         f'  <caption style="font-size:14px; font-weight:500;'
@@ -60,8 +60,7 @@ def generate_html_table(results, title, group1_name, group2_name):
     )
     html_parts.append("  <thead>")
     html_parts.append(
-        '    <tr style="background:#f5f5f5;'
-        'border-top:2px solid #333; border-bottom:1px solid #333;">'
+        '    <tr style="border-top:2px solid #333; border-bottom:1px solid #333;">'
     )
     html_parts.append(
         '      <th style="padding:10px; text-align:left;'
@@ -92,7 +91,8 @@ def generate_html_table(results, title, group1_name, group2_name):
     html_parts.append("  <tbody>")
 
     for i, r in enumerate(results):
-        border = "2px solid #333" if i == len(results) - 1 else "1px solid #ddd"
+        # Strict three-line table: no inner horizontal rules; only bottom rule on the last trait row.
+        border = "2px solid #333" if i == len(results) - 1 else "none"
         html_parts.append(f'    <tr style="border-bottom:{border};">')
         html_parts.append(
             f'      <td style="padding:10px; text-align:left;'

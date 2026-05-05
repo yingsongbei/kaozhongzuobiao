@@ -1,6 +1,6 @@
 ---
 name: academic-stats-table
-description: "Generate publication-ready academic statistics tables from raw data. When the user asks to create a two-group comparison table with means ± s.e., t-test significance, and English academic formatting, use this skill."
+description: "Generate publication-ready academic statistics tables from raw data. When the user asks to create a two-group comparison table with means ± s.e., t-test significance, and strict three-line English academic formatting, use this skill."
 agent_created: true
 ---
 
@@ -88,13 +88,15 @@ pip install numpy scipy
 
 ## Output format
 
-The generated table uses a three-line academic table style:
-- Top border: 2px solid
-- Bottom border (last row): 2px solid
-- Internal rows: 1px solid
-- Header: light gray background
-- Significance column: *** / ** / * / ns
-- Footer: "n: biological replicates. Data are means ± s.e. Student's t-test; ***P < 0.001, **P < 0.01, *P < 0.05"
+The generated table must use a strict three-line academic table style:
+- Top thick rule: place above the group-name/header row (e.g. above `HHZ | n | HHZ-25Q | n`).
+- Middle thin rule: place directly below the group-name/header row.
+- Bottom thick rule: place below the last phenotype/trait row.
+- Do not draw any other rules: no vertical borders, no inner horizontal rules between phenotype rows, no borders around footnotes, and no grid-style table lines.
+- Put `mean ± s.e.` in one cell, then `n` in a separate column: `Trait | Group 1 | n | Group 2 | n | Sig.`.
+- Prefer Times New Roman for Excel/table outputs when matching manuscript supplementary table style.
+- Significance column: *** / ** / * / ns, unless the target journal/example uses a different display.
+- Footer example: "n: Number of biological replicates. Data are presented as means ± s.e.. Student's t-test; *P < 0.05, **P < 0.01".
 
 ## Statistical methods
 
@@ -105,6 +107,15 @@ The generated table uses a three-line academic table style:
 | t-test | Welch's t-test (unequal variance), one-tailed (group 2 > group 1) |
 | Significance | *** P < 0.001, ** P < 0.01, * P < 0.05, ns: not significant |
 | Rounding | Means and s.e. rounded to 2 decimal places |
+
+## Excel output rules
+
+When creating an Excel version with `openpyxl`, apply the same strict three-line table style to the statistics sheet:
+- Clear all existing borders in the table and footnote area first.
+- Apply `top=thick` and `bottom=thin` only to the group-name/header row.
+- Apply `bottom=thick` only to the final phenotype/trait row.
+- Leave all other cells borderless, including phenotype rows between the header and final row, empty separator rows, and footnotes.
+- Avoid merged mean/s.e. subheaders unless explicitly requested; default to `mean ± s.e.` in one cell and `n` in a separate column.
 
 ## Notes
 

@@ -1,16 +1,38 @@
 # academic-stats-table
 
-从原始数据生成学术论文风格统计表格的 Python 工具。
+从原始数据生成学术论文风格统计表格的 Python 工具，可作为 WorkBuddy Skill 使用。
 
 ## 功能
 
 输入两组实验数据，自动计算：
+
 - **均值** (mean)
 - **标准误** (s.e. = SD / sqrt(n))
 - **Welch t 检验**（单尾，不等方差）
 - **显著性标注**（***/ **/ * / ns）
 
-输出英文学术三线表格式的 HTML，可直接用于论文或报告。
+输出英文学术三线表格式的 HTML，可直接用于论文、补充表或报告。
+
+## 三线表格式
+
+默认采用严格三线表格式：
+
+1. **表头/基因名上方**：粗线
+2. **表头/基因名下方**：细线
+3. **最后一个表型/性状下方**：粗线
+4. 其他地方不加线条：
+   - 不要竖线
+   - 不要表型行之间的内部横线
+   - 不要注释区边框
+   - 不要类似 Excel 网格的全表格线
+
+表格结构为：
+
+| Trait | Group 1 | n | Group 2 | n | Sig. |
+|-------|---------|---|---------|---|------|
+| Trait name | mean ± s.e. | n | mean ± s.e. | n | * |
+
+在 HTML 输出中，实际样式为：表头上方 2px 横线、表头下方 1px 横线、最后一个性状下方 2px 横线，字体为 Times New Roman。
 
 ## 依赖
 
@@ -51,22 +73,35 @@ pip install numpy scipy
 ```bash
 python scripts/academic_stats.py << 'JSON'
 {
-  "title": "...",
-  "group1_name": "...",
-  "group2_name": "...",
-  "traits": [...]
+  "title": "Table 1. Comparison of traits between groups",
+  "group1_name": "Wild-type",
+  "group2_name": "Mutant",
+  "traits": [
+    {
+      "name": "Plant height (cm)",
+      "data1": [10.2, 11.5, 9.8],
+      "data2": [14.3, 15.1, 13.9]
+    }
+  ]
 }
 JSON
 ```
 
 ### 输出示例
 
-| Trait | Wild-type | n | Mutant | n | |
-|-------|-----------|---|--------|---|---|
-| Plant height (cm) | 11.20 ± 0.58 | 5 | 15.40 ± 0.51 | 5 | *** |
-| Grain weight (g) | 2.20 ± 0.07 | 5 | 3.10 ± 0.07 | 5 | *** |
+```text
+Table 1. Comparison of traits between groups
 
-*n: biological replicates. Data are means ± s.e. Student's t-test; ***P < 0.001, **P < 0.01, *P < 0.05*
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Trait                 Wild-type   n   Mutant      n   Sig.
+────────────────────────────────────────
+Plant height (cm)     10.50 ± 0.49 3   14.43 ± 0.35 3   *
+Grain weight (g)       2.13 ± 0.09 3    3.13 ± 0.09 3   **
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+n: biological replicates.
+Data are means ± s.e. (standard error). Student's t-test; ***P < 0.001, **P < 0.01, *P < 0.05
+```
 
 ## 字段说明
 
@@ -89,7 +124,7 @@ JSON
 
 ## 与 WorkBuddy 配合
 
-本工具支持作为 [WorkBuddy](https://www.codebuddy.cn/) 的 Skill 使用。将整个目录放入 `~/.workbuddy/skills/` 下即可自动注册。
+本工具支持作为 [WorkBuddy](https://www.codebuddy.cn/) 的 Skill 使用。将整个 `academic-stats-table/` 目录放入 `~/.workbuddy/skills/` 下即可自动注册。
 
 ## 许可
 
