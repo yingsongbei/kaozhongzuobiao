@@ -2,7 +2,7 @@
 """
 Academic statistics table generator.
 
-Computes mean ± s.e. and one-tailed Welch's t-test for two-group comparisons
+Computes mean ± s.e. and one-tailed Student's t-test for two-group comparisons
 across multiple traits, then outputs an HTML table in publication-ready format.
 """
 
@@ -19,8 +19,8 @@ def calc_stats(data1, data2, trait_name):
     std1, std2 = np.std(data1, ddof=1), np.std(data2, ddof=1)
     sem1, sem2 = std1 / np.sqrt(n1), std2 / np.sqrt(n2)
 
-    # One-tailed Welch's t-test
-    t_stat, p_two = stats.ttest_ind(data2, data1, equal_var=False)
+    # One-tailed Student's t-test (equal variance assumed)
+    t_stat, p_two = stats.ttest_ind(data2, data1, equal_var=True)
     p_one = p_two / 2 if t_stat > 0 else 1 - p_two / 2
 
     if p_one < 0.001:

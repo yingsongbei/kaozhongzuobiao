@@ -1,6 +1,7 @@
 # academic-stats-table
 
 从原始数据生成学术论文风格统计表格的 Python 工具，可作为 WorkBuddy Skill 使用。
+支持 HTML 和 Excel 两种输出格式。
 
 ## 功能
 
@@ -8,10 +9,10 @@
 
 - **均值** (mean)
 - **标准误** (s.e. = SD / sqrt(n))
-- **Welch t 检验**（单尾，不等方差）
+- **Student's t 检验**（单尾，等方差）
 - **显著性标注**（***/ **/ * / ns）
 
-输出英文学术三线表格式的 HTML，可直接用于论文、补充表或报告。
+输出英文学术三线表格式的 HTML 或 Excel，可直接用于论文、补充表或报告。
 
 ## 三线表格式
 
@@ -32,16 +33,18 @@
 |-------|---------|---|---------|---|------|
 | Trait name | mean ± s.e. | n | mean ± s.e. | n | * |
 
-在 HTML 输出中，实际样式为：表头上方 2px 横线、表头下方 1px 横线、最后一个性状下方 2px 横线，字体为 Times New Roman。
+- HTML 输出：表头上方 2px 横线、表头下方 1px 横线、最后一个性状下方 2px 横线，字体为 Times New Roman
+- Excel 输出：表头行 `top=medium, bottom=thin`，最后一行 `bottom=medium`，中间行无边框，全局 Times New Roman
 
 ## 依赖
 
 - Python >= 3.8
 - numpy
 - scipy
+- openpyxl（Excel 输出用）
 
 ```bash
-pip install numpy scipy
+pip install numpy scipy openpyxl
 ```
 
 ## 用法
@@ -68,7 +71,7 @@ pip install numpy scipy
 }
 ```
 
-### 运行
+### HTML 输出
 
 ```bash
 python scripts/academic_stats.py << 'JSON'
@@ -85,6 +88,22 @@ python scripts/academic_stats.py << 'JSON'
   ]
 }
 JSON
+```
+
+### Excel 输出
+
+在 Python 中导入 `calc_stats` 函数，结合 `openpyxl` 生成 Excel 文件：
+
+```python
+import sys
+sys.path.insert(0, "scripts")
+from academic_stats import calc_stats
+import openpyxl
+
+# 计算统计量
+result = calc_stats(data_group1, data_group2, "Trait name")
+
+# result 包含: trait, n1, n2, mean1, mean2, sem1, sem2, p_one, sig, t_stat
 ```
 
 ### 输出示例
@@ -118,9 +137,18 @@ Data are means ± s.e. (standard error). Student's t-test; ***P < 0.001, **P < 0
 |------|------|
 | 均值 | 算术平均值 |
 | 标准误 | 标准差 / sqrt(n) |
-| t 检验 | Welch's t-test（不等方差），单尾检验（假设组2 > 组1） |
+| t 检验 | Student's t-test（等方差，`equal_var=True`），单尾检验（假设组2 > 组1） |
 | 显著性 | *** P < 0.001, ** P < 0.01, * P < 0.05, ns 不显著 |
 | 舍入 | 均值和标准误保留两位小数 |
+
+## 文件结构
+
+```
+academic-stats-table/
+├── SKILL.md                    # Skill 定义和工作流说明
+└── scripts/
+    └── academic_stats.py       # 统计计算 + HTML 输出
+```
 
 ## 与 WorkBuddy 配合
 

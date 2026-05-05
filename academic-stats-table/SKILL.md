@@ -8,7 +8,7 @@ agent_created: true
 
 Generate publication-ready English statistical tables from raw numeric data.
 Outputs a two-group comparison table with mean ± s.e., sample size (n),
-and one-tailed Welch's t-test significance markings.
+and one-tailed Student's t-test significance markings.
 
 ## When to use
 
@@ -72,18 +72,25 @@ python scripts/academic_stats.py << 'JSON'
 JSON
 ```
 
-### Step 3: Display the result
+### Step 3: Output format
 
-After the script outputs HTML, use `show_widget` to render the table inline.
-Do NOT modify the HTML — use it as-is.
+Determine the output format based on user request:
+- **HTML (default)**: Run the script, capture its HTML output, render with `show_widget`.
+- **Excel**: Import `calc_stats` from `scripts/academic_stats.py`, use it with `openpyxl` to build a strict three-line table (see Excel output rules below). Write a self-contained Python script that reads the CSV, groups data, calls `calc_stats`, and writes the Excel file.
+
+### Step 4: Display the result
+
+- HTML: Use `show_widget` to render inline. Do NOT modify the HTML.
+- Excel: Use `open_result_view` to present the file. Clean up temporary scripts after running.
 
 ## Dependencies
 
 - Python ≥ 3.8
 - numpy, scipy
+- openpyxl (for Excel output)
 
 ```bash
-pip install numpy scipy
+pip install numpy scipy openpyxl
 ```
 
 ## Output format
@@ -104,7 +111,7 @@ The generated table must use a strict three-line academic table style:
 |--------|--------|
 | Mean | Arithmetic mean |
 | s.e. | Standard error = SD / √n |
-| t-test | Welch's t-test (unequal variance), one-tailed (group 2 > group 1) |
+| t-test | Student's t-test (equal variance, `equal_var=True`), one-tailed (group 2 > group 1) |
 | Significance | *** P < 0.001, ** P < 0.01, * P < 0.05, ns: not significant |
 | Rounding | Means and s.e. rounded to 2 decimal places |
 
@@ -116,6 +123,8 @@ When creating an Excel version with `openpyxl`, apply the same strict three-line
 - Apply `bottom=thick` only to the final phenotype/trait row.
 - Leave all other cells borderless, including phenotype rows between the header and final row, empty separator rows, and footnotes.
 - Avoid merged mean/s.e. subheaders unless explicitly requested; default to `mean ± s.e.` in one cell and `n` in a separate column.
+- Use Times New Roman for all cells (headers, data, footnotes).
+- After generating, clean up any temporary Python scripts.
 
 ## Notes
 
