@@ -156,4 +156,4 @@ academic-stats-table/
 
 ## 许可
 
-MIT
+本项目采用 MIT License，详见 [LICENSE](LICENSE)。
